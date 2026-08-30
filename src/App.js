@@ -14,7 +14,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div classNameName="font-monospace">
+    <div className="font-monospace">
       <BrowserRouter>
         <Navbarr></Navbarr>
         <Routes>

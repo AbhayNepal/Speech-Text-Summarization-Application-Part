@@ -1,7 +1,7 @@
 import React from "react";
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
-import { settings } from "../icons"
+import {settings} from "../icons"
 
 const Index = () => {
 
@@ -27,6 +27,38 @@ const Index = () => {
     const [summary, setSummary] = useState("")
     const [summaryAbs, setSummaryAbs] = useState("")
 
+    function useTypewriter(text = '', speed = 25) {
+        const [displayedText, setDisplayedText] = useState('');
+        const [isTyping, setIsTyping] = useState(false);
+
+        useEffect(() => {
+            if (!text) {
+                setDisplayedText('');
+                setIsTyping(false);
+                return;
+            }
+
+            setIsTyping(true);
+            let index = 0;
+            setDisplayedText('');
+
+            const interval = setInterval(() => {
+                if (index < text.length) {
+                    setDisplayedText(text.slice(0, index + 1));
+                    index++;
+                } else {
+                    setIsTyping(false);
+                    clearInterval(interval);
+                }
+            }, speed);
+
+            return () => clearInterval(interval);
+        }, [text, speed]);
+
+        // Appends a block cursor '▋' while typing
+        return displayedText + (isTyping ? ' ▋' : '');
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             if (summary === "" || text === "" || count >= summaryToDisplayArray.length) {
@@ -34,8 +66,7 @@ const Index = () => {
                 // setSummaryToDisplay("");
                 setCount(0);
 
-            }
-            else {
+            } else {
                 setSummaryToDisplay(`${summaryToDisplay}${summaryToDisplayArray[count]}`);
                 setCount(count + 1);
             }
@@ -60,8 +91,7 @@ const Index = () => {
                     setFunction(json);
                     // document.getElementById("demo").innerHTML = JSON.stringify(json)
                 })
-        }
-        else {
+        } else {
             await fetch(url,
                 {
                     method: method,
@@ -137,21 +167,18 @@ const Index = () => {
                 // console.log(json);
                 return json
             })
-        
-
 
 
         setSummary(summary_["abs_summ"]);
-        
-        
+
+
         setSignificantWords(summary_["significant_words"]);
         // setSummaryToDisplay(summary_["summary"]);
         setSummaryToDisplayArray(summary_["summary"].split(''));
-        
 
-        
+
         // setSummaryAbsToDisplayArray(summary_abs["abs_summ"].split(''));
-        
+
 
         // console.log(summary_["summary"].split(''));
 
@@ -192,9 +219,8 @@ const Index = () => {
                 console.log(json);
                 return json
             })
-            setSummaryAbs(summary_abs["abs_summ"]);
-
-
+        const summaryAbElement = summary_abs["summary"]["abs_summ"];
+        setSummaryAbs(summaryAbElement);
 
     }
 
@@ -208,8 +234,7 @@ const Index = () => {
                 text: 'The input text is too short to summarize!!! Try again with longer length (> 50 words)',
                 // footer: '<a href="">Why do I have this issue?</a>'
             })
-        }
-        else {
+        } else {
             Swal.fire({
                 title: 'Do you want to generate the summary?',
                 showDenyButton: true,
@@ -253,24 +278,27 @@ const Index = () => {
                     <div className="row">
                         <div className="col-6 my-2 p-2">
                             <div className="input-group input-group-lg border">
-                                <textarea type="text" className="form-control bg-dark text-light font-monospace" aria-label="Large" aria-describedby="inputGroup-sizing-sm"
-                                    placeholder='Type your text here ...'
-                                    rows="15"
-                                    cols="50"
-                                    value={text}
+                                <textarea type="text" className="form-control bg-dark text-light font-monospace"
+                                          aria-label="Large" aria-describedby="inputGroup-sizing-sm"
+                                          placeholder='Type your text here ...'
+                                          rows="15"
+                                          cols="50"
+                                          value={text}
 
-                                    onChange={(e) => {
-                                        setText(e.target.value);
-                                        // console.log("Changed");
-                                        setSummary("");
-                                        setSummaryToDisplay("");
-                                        setSummaryAbs("");
-                                    }}
+                                          onChange={(e) => {
+                                              setText(e.target.value);
+                                              // console.log("Changed");
+                                              setSummary("");
+                                              setSummaryToDisplay("");
+                                              setSummaryAbs("");
+                                          }}
                                 />
                             </div>
                             <div className="row mx-auto pt-5">
                                 <div className="col btn btn-warning"
-                                    onClick={() => { summarizationClicked() }}
+                                     onClick={() => {
+                                         summarizationClicked()
+                                     }}
                                 >
                                     {settings} Summarize {settings}
                                 </div>
@@ -278,7 +306,7 @@ const Index = () => {
                         </div>
                         <div className="col-6 my-2 p-2">
                             <div>
-                                <div className="container" style={{ fontSize: '20px' }}>
+                                <div className="container" style={{fontSize: '20px'}}>
                                     <div className="row">
                                         <div className="float-start col">
                                             <span className='float-start'>Small</span>
@@ -291,63 +319,67 @@ const Index = () => {
                                         </div>
                                     </div>
                                     <span className="row p-1 text-light m-3 bg-warning">
-                                        <input type="range" className="" id="customRange1" min={0} max={2} step={1} onChange={(e) => {
-                                            setRangeValue(parseInt(e.target.value));
-                                            setSummary("");
-                                            setSummaryAbs("");
-                                            setSummaryToDisplay("");
-                                        }} />
+                                        <input type="range" className="" id="customRange1" min={0} max={2} step={1}
+                                               onChange={(e) => {
+                                                   setRangeValue(parseInt(e.target.value));
+                                                   setSummary("");
+                                                   setSummaryAbs("");
+                                                   setSummaryToDisplay("");
+                                               }}/>
                                         {/* {rangeValue} */}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="input-group input-group-lg rounded border border-4 border-success border-2">
-                                <textarea type="text" className="form-control bg-dark text-light font-monospace" aria-label="Large" aria-describedby="inputGroup-sizing-sm"
-                                    placeholder='Your extractive summary will appear here ...'
-                                    value={(summary === "" || text == "") ? "" : summaryToDisplay}
+                                <textarea type="text" className="form-control bg-dark text-light font-monospace"
+                                          aria-label="Large" aria-describedby="inputGroup-sizing-sm"
+                                          placeholder='Your extractive summary will appear here ...'
+                                          value={(summary === "" || text == "") ? "" : summaryToDisplay}
                                     // disabled
-                                    rows="12"
-                                    cols="50"
+                                          rows="12"
+                                          cols="50"
 
-                                    onChange={(e) => {
-                                        // TODO
-                                    }}
+                                          onChange={(e) => {
+                                              // TODO
+                                          }}
                                 />
                             </div>
                             <div>
-                                <br />
+                                <br/>
                             </div>
                             <div className='pt-2'>
-                                <textarea type="text" className="form-control bg-dark text-light font-monospace" aria-label="Large" aria-describedby="inputGroup-sizing-sm"
-                                    placeholder='Significant words will appear here ...'
-                                    value={(summary === "" || text == "") ? "" : `${significantWords.join(", ")}`}
+                                <textarea type="text" className="form-control bg-dark text-light font-monospace"
+                                          aria-label="Large" aria-describedby="inputGroup-sizing-sm"
+                                          placeholder='Significant words will appear here ...'
+                                          value={(summary === "" || text == "") ? "" : `${significantWords.join(", ")}`}
                                     // disabled
-                                    rows="2"
-                                    cols="50"
+                                          rows="2"
+                                          cols="50"
                                     // value={"Your text to summarize here ... "}
 
-                                    onChange={(e) => {
-                                        // TODO
-                                    }}
+                                          onChange={(e) => {
+                                              // TODO
+                                          }}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                    <div className="input-group input-group-lg rounded border border-4 border-success border-2">
-                                <textarea type="text" className="form-control bg-dark text-light font-monospace" aria-label="Large" aria-describedby="inputGroup-sizing-sm"
-                                    placeholder={(summary === "" || text == "") ? 'Your abstractive summary will appear here ...' : "Loading your abstractive summary hang on !!"}
-                                    value={(summary === "" || text == "") ? "" : summaryAbs}
+                        <div className="input-group input-group-lg rounded border border-4 border-success border-2">
+                                <textarea type="text" className="form-control bg-dark text-light font-monospace"
+                                          aria-label="Large" aria-describedby="inputGroup-sizing-sm"
+                                          placeholder={(!summaryAbs) ? 'Your abstractive summary will appear here ...' : ""}
+                                          value={ useTypewriter(summaryAbs, 20)}
                                     // disabled
-                                    rows="12"
-                                    cols="50"
+                                          rows="12"
+                                          cols="50"
 
-                                    onChange={(e) => {
-                                        // TODO
-                                    }}
+                                          onChange={(e) => {
+                                              // TODO
+                                          }}
                                 />
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -356,8 +388,6 @@ const Index = () => {
 }
 
 export default Index;
-
-
 
 
 // In Sanskrit, Maha means great or big, and Shivaratri means a night dedicated to Shiva. According to the Rudra Samhita, the wedding of Shiva and Parvati took place in the Himalayas. On that day, Parvati transformed herself into Chandraghanta with golden skin and ten arms, and they got married in their beautiful divine forms at Triyuginarayan village in Rudraprayag, India. So, their marriage is celebrated as Mahashivaratri every year.
